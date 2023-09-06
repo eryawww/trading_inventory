@@ -1,5 +1,28 @@
 [link adaptable]()
-# Jelaskan Bagaimana Cara Mengimplementasikan Checklist
+# Cara Implementasi
+## Setup Library yang dibutuhkan
+Membuat file `requirements.txt` yang berisi
+```
+django
+gunicorn
+whitenoise
+psycopg2-binary
+requests
+urllib3
+```
+Installasi dapat dilakukan pada terminal dengan:
+1. Tanpa Virtual Environment
+```sh
+pip install -r requirements.txt
+```
+2. Menggunakan Virtual Environment
+```sh
+python -m venv venv # Buat virtual env
+./venv/Scripts/activate # pada windows atau
+source venv/Scripts/activate # pada mac
+pip install -r requirements.txt
+```
+
 ## 1. Membuat sebuah proyek Django baru
 
 Menggunakan `django-admin createproject NAME` kita akan membuat direktori baru dengan nama `NAME`. Direktori akan berisi `manage.py` dan folder `NAMA` yang berisi terkait setting dan routing dari proyek. `manage.py` adalah script python yang akan kita gunakan untuk memantain dan mengatur proyek kita. `python manage.py runserver` adalah command untuk menjalankan proyek kita (**Pastikan untuk menjalankan ini sebelum menuju `http://localhost:8000/hello` yang merupakan url web django kita**).
@@ -74,5 +97,8 @@ class Item(models.Model):
     amount = models.IntegerField()
     description = models.TextField()
 ```
+    Mengkoneksikan database dengan view akan dibahas dikemudian hari setelah tutorial PBP selanjutnya xixi.
  
 ## Melakukan deployment ke Adaptable
+Pastikan repository proyek sudah berada pada github dan bersifat public. Selanjutnya, pada adaptable, pilih opsi `deploy a new app`. Pilih repository sesuai proyek yang akan dideploy. Kemudian `Python App Template`. Selanjutnya adalah opsi database, sementara bisa menggunakan `PostgreSQL`. Sesuaikan versi python dengan versi lokal, `python --version` pada terminal lokal untuk melihat versi. Dan masukan `python manage.py migrate && gunicorn NAMA_PROYEK.wsgi` pada `Start Command`. Tentukan nama applikasi dan checklist `HTTP Listener on PORT`.
+
