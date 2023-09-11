@@ -24,13 +24,16 @@ class ItemTestCase(TestCase):
     
     def test_item_attr(self):
         STRING_ATTR = ['name', 'description']
-        FLOAT_ATTR = ['buy_price', 'amount']
+        FLOAT_ATTR = ['buy_price']
+        INT_ATTR = ['amount']
         TIME_ATTR = ['time_buy']
 
         items = Item.objects.all()
         for item in items:
             for attr in STRING_ATTR:
                 self.assertIsInstance(getattr(item, attr), str)
+            for attr in INT_ATTR:
+                self.assertIsInstance(getattr(item, attr), int)
             for attr in FLOAT_ATTR:
                 self.assertIsInstance(getattr(item, attr), float)
             for attr in TIME_ATTR:
