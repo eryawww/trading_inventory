@@ -3,13 +3,153 @@
 
 # Cara Implementasi
 
+## Membuat Form (`forms.py`)
+
+`APP/forms.py` akan mengimplementasikan library `django.forms` yang akan mempermudah pembuatan form kita. Seluruh html sudah dihandle oleh library form tersebut. Contoh isi `APP/forms.py` adalah.
+```python
+from main.models import Item
+class ItemForm(ModelForm):
+    class Meta:
+        model = Item
+        fields = ['name', 'amount', 'buy_price', 'description']
+```
+dimana `name`, `amount`, `buy_price`, dan `description` adalah field yang ada pada model `Item` yang sudah didefinisikan.
+
+## Merender form yang dibuat
+
+Untuk merender form yang sudah kita buat, kita dapat menggunakan kemudahan library django. Pada `html` yang akan kita buat, kita dapat menulis.
+```html
+<form method="POST">
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Add Product"/>
+            </td>
+        </tr>
+    </table>
+</form>
+```
+`csrf_token` token wajib didefinisikan setiap definisi form, hal ini terkait dengan keamanan. `form.as_table` akan merender form secara keseluruhan kecuali button submit yang perlu kita tulis sendiri. Jika ingin memodifikasi form agar lebih estetik, kita dapat menggunakan attribut dari `form` seperti `form.visible_fiels`, `form.hidden_fields` dan sebagainya yang tertera pada [dokumentasinya](https://docs.djangoproject.com/en/4.2/topics/forms/).
+
+## Menambahkan view untuk serializer json dan xml
+
+Serializer digunakan untuk mengirim data dalam bentuk `json` dan `xml`. Data ini dapat digunakan sebagai interface program lain (API). Dalam django, serializer diimplementasikan pada `views.py` dengan mereturn `HTTPResponse` dengan `application_type` `application/json` atau `application/xml`. Berikut contoh kodenya.
+```python
+from django.core import serializers
+from main.models import Item
+def show_xml(request):
+    data = Item.objects.all()
+    return HttpResponse(serializers.serialize('xml', data), content_type='application/xml')
+```
+```python
+def show_json(request):
+    data = Item.objects.all()
+    return HttpResponse(serializers.serialize('json', data), content_type='application/json')
+```
+
+## Membuat getter dengan dynamic routing
+
+Dynamic routing digunakan untuk menyesuaikan data dengan input dari user melalui url. Contoh, jika kita ingin mendapatkan `Item` **pertama** pada database kita dapat menuju url `www.outapp/1`. Implementasinya pada django dengan mengubah `urls.py` dan `views.py`. Pada `urls.py`
+```python
+from django.urls import path
+
+urlpatterns = [
+    ...
+    path('xml/<int:id>', views.show_xmlbyid, name='xmlbyid'),
+    path('json/<int:id>', views.show_jsonbyid, name='jsonbyid'),
+]
+```
+Sedangkan pada `views.py`
+```python
+def show_xmlbyid(request, id: int):
+    data = Item.objects.filter(pk=id)
+    print(data)
+    return HttpResponse(serializers.serialize('xml', data), content_type='application/xml')
+
+def show_jsonbyid(request, id: int):
+    data = Item.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize('json', data), content_type='application/json')
+```
+
 ## Perbedaan antara POST dan GET pada Django?
+
+**POST** adalah method protokol `HTTP` yang berfokus pada pengiriman data. Pengiriman data pada `POST` dikirim melalui body request membuatnya tidak mudah terlihat. `POST` biasanya digunakan saat melakukan update data kepada server seperti *sign up*, upload file, dan sebagainya
+
+**Get** adalah method protokol `HTTP` yang fokus pada simplisitas. Data yang dikirim akan disimpan pada `url` yang dituju. Contohnya pada saat mencari video pada youtube, url yang kita tuju akan berpola `youtube.com/results?search_query=[KEYWORD PENCARIAN]`. Dikarenakan pengiriman data yang terjadi pada url, method `GET` tidak cocok untuk mengirim data rahasia seperti data saat *sign up*. Bayangkan jika kalian `sign up` pada sebuah website dengan url `insta.com/signup/username=eryaw&passowrd=joget`, akan menjadi aneh bukan?. `GET` method cocok untuk mendapatkan data seperti file html website yang perlu kita render (yang biasa kita lakukan), query database `insta/user/eryawwww` untuk mendapatkan user `eryawww` dan sebagainya.
 
 ## Perbedaan utama antara XML, JSON, dan HTML dalam konteks pengiriman data?
 
+**HTML** digunakan untuk mengirin sebuah halaman dengan segala peletakan desain, kontennya, script, dan sebagainya. `HTML` lebih cocok jika client adalah manusia yang menggunakan browser. Jika client merupakan sebuah applikasi untuk mengambil data otomatis (API), `HTML` akan lebih susah dipahami karena diperlukan parsing terlebih dahulu yang memakan waktu dan tidak efisien.
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="row container-fluid bg-dark py-2 px-3 m-0">
+        <a class="col text-white h-6" style="text-decoration: none;"><strong>Trading Inventory</strong></a>
+        <a class="col text-end text-white" style="text-decoration: none;"><strong>69</strong> Saved Data</a>
+    </div>
+</body>
+</html>
+```
+
+**XML** adalah format yang machine & human readable tidak seperti `HTML`. Struktur `XML` mirip seperti `tree` yang memiliki satu root. Struktur `XML` sangat mirip dengan `HTML` pada dasarnya. Setiap `node` pada `tree` ditandai dengan symbol `<>`. Setiap node dapat memiliki banyak `properti`. Karena format `XML` yang machine readable, `XML` sering dijadikan opsi untuk mengirim data sebagai **API**.
+```xml
+<django-objects version="1.0">
+    <link type="text/css" rel="stylesheet" id="dark-mode-custom-link"/>
+    <link type="text/css" rel="stylesheet" id="dark-mode-general-link"/>
+    <style lang="en" type="text/css" id="dark-mode-custom-style"/>
+    <style lang="en" type="text/css" id="dark-mode-native-style"/>
+    <object model="main.item" pk="1">
+        <field name="name" type="CharField">BBCA</field>
+        <field name="amount" type="IntegerField">20</field>
+        <field name="buy_price" type="FloatField">20000.0</field>
+        <field name="time_buy" type="DateTimeField">2023-09-06T13:41:49.801270+00:00</field>
+        <field name="description" type="TextField">fomo</field>
+    </object>
+</django-objects>
+``` 
+
+**JSON** adalah format machine & human readable. Format json adalah format yang paling sering digunakan baru-baru ini. Salah satu alasannya adalah dikarenakan simplisitasnya. Json tidak memakan banyak tempat sehingga sangat mudah untuk dibaca manusia. Container pada json yang menggunakan `Dictionary` dan `List` membuatnya sangat mudah untuk dibaca mesin/programmer API.
+```json
+[
+    {
+        "model": "main.item", 
+        "pk": 1, 
+        "fields": {
+            "name": "BBCA", 
+            "amount": 20, 
+            "buy_price": 20000.0, 
+            "time_buy": "2023-09-06T13:41:49.801Z", 
+            "description": "fomo"
+        }
+    }
+]
+```
+
 ## Mengapa JSON sering digunakan dalam pertukaran data antara aplikasi web modern?
 
+**JSON** sering digunakan sebagai pertukaran data antar applikasi (API) dikarenakan sifatnya yang machine readable. Pada `JSON`, terdapat `dictionary` dan `list` sebagai kontrainer yang merupakan container yang sering dipakai oleh para pemrogram. Penulisan **JSON** lebih singkat dibandingkan `XML` membuatnya efisien secara ukuran dan lebih human readable. 
+
 # Screenshot Postman
+Gambaran untuk response untuk endpoint `/xml` dan `/xml/1`
+<div style='display: flex;'>
+    <img src='doc/postman_xml.png' width=50%>
+    <img src='doc/postman_xmlid.png' width=50%>
+</div>
+
+Gambaran untuk response untuk endpoint `/json` dan `/json/1`
+<div style='display: flex;'>
+    <img src='doc/postman_json.png' width=50%>
+    <img src='doc/postman_jsonid.png' width=50%>
+</div>
 
 -----
 
