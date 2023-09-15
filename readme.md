@@ -1,4 +1,14 @@
 [Application Link](https://trading-inventory.adaptable.app)
+<h1 style='color:red'> Tugas 1 </h1>
+# Cara Implementasi
+## Perbedaan antara POST dan GET pada Django?
+## Perbedaan utama antara XML, JSON, dan HTML dalam konteks pengiriman data?
+## Mengapa JSON sering digunakan dalam pertukaran data antara aplikasi web modern?
+# Screenshot Postman
+
+-----
+
+<h1 style='color:red'> Tugas 2 </h1>
 # Cara Implementasi
 ## Setup Library yang dibutuhkan
 Membuat file `requirements.txt` yang berisi

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block navbar %}
+    <div class="container-fluid bg-dark py-2 px-3 m-0">
+        <a class="text-white h-6" style="text-decoration: none;"><strong>Trading Inventory</strong></a>
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="m-3">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% for hidden_field in form.hidden_fields %}
+                {{ hidden_field }}
+            {% endfor %}
+
+            {% for field in form.visible_fields %}
+                <div class='form-group my-2'>
+                    <label style="font-weight: 500;">{{field.label}}</label>
+                    {% render_field field class="form-control" %}
+                </div>
+            {% endfor %}
+
+            <input type="submit" class="btn btn-primary" value="Add Product"/>
+        </form>
+    </div>
+{% endblock content %}
