@@ -13,8 +13,12 @@ def main(request: HttpRequest):
         pass
     data = models.Item.objects.all()
     len_data = len(data)
+    if len_data == 0:
+        amount_data = 0
+    else:
+        amount_data = sum([x.amount for x in data])
     adddata_url = '/create'
-    return render(request, 'main.html', dict(data=data, adddata_url=adddata_url, len_data=len_data))
+    return render(request, 'main.html', dict(data=data, adddata_url=adddata_url, len_data=len_data, total_amount=amount_data))
 
 def create(request: HttpRequest):
     print(request.POST)
@@ -35,7 +39,6 @@ def show_json(request):
 
 def show_xmlbyid(request, id: int):
     data = Item.objects.filter(pk=id)
-    print(data)
     return HttpResponse(serializers.serialize('xml', data), content_type='application/xml')
 
 def show_jsonbyid(request, id: int):

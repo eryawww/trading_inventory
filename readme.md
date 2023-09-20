@@ -139,6 +139,9 @@ def show_jsonbyid(request, id: int):
 **JSON** sering digunakan sebagai pertukaran data antar applikasi (API) dikarenakan sifatnya yang machine readable. Pada `JSON`, terdapat `dictionary` dan `list` sebagai kontrainer yang merupakan container yang sering dipakai oleh para pemrogram. Penulisan **JSON** lebih singkat dibandingkan `XML` membuatnya efisien secara ukuran dan lebih human readable. 
 
 # Screenshot Postman
+Gambaran untuk response untuk endpoint `html`
+<img src='doc/postman_html.png' width=100%>
+
 Gambaran untuk response untuk endpoint `/xml` dan `/xml/1`
 <div style='display: flex;'>
     <img src='doc/postman_xml.png' width=50%>
