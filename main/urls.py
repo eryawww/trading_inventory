@@ -9,5 +9,8 @@ urlpatterns = [
     path('xml/<int:id>', views.show_xmlbyid, name='xmlbyid'),
     path('json/', views.show_json, name='json'),
     path('json/<int:id>', views.show_jsonbyid, name='jsonbyid'),
-    path('create/', views.create, name='create')
+    path('create/', views.create, name='create'),
+    path('register', views.signup, name='register'),
+    path('login', views.login_page, name='login'),
+    path('logout', views.logout_page, name='logout'),
 ]

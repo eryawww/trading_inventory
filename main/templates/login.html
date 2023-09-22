@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block head %}
+<style>
+.label {
+    font-weight: 700;
+}
+</style>
+{% endblock head %}
+
+{% block navbar %}
+<div class="row container-fluid bg-dark py-2 px-3 m-0">
+    <a class="col text-white h-6" style="text-decoration: none;"><strong>Trading Inventory</strong></a>
+</div>
+{% endblock navbar %}
+{% block content %}
+
+<div class="container rounded p-3 m-5 bg-dark text-white", style="width: auto, display: block;">
+    <div class="p-3">
+        <h1>Login</h1>
+        <form method="post" action="">
+            {% csrf_token %}
+            <label class="text-white label">Username</label>
+            <div class="py-1">
+            <td>
+                <input type="text" name="username" placeholder="Username" class="form-control">
+            </td>
+            <div class="py-3">
+
+            <label class="text-white label">Password</label>
+            <div class="py-1">
+            <td>
+                <input type="password" name="password" placeholder="Password" class="form-control">
+            </td>
+            <div class="py-3">
+            <input type="submit" class="btn btn-primary rounded label">
+        </form>
+        <a href={% url 'main:register' %} class="btn btn-primary rounded label mx-5">Sign Up</a>
+        {% if messages %}
+        <div class="py-3">
+        <ul>
+            {% for message in messages %}
+            <li>{{message}}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}

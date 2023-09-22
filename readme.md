@@ -1,9 +1,33 @@
 [Application Link](https://trading-inventory.adaptable.app)
+
+<h1 style='color:red'> Tugas 4 </h1>
+
+# Cara Implementasi
+
+## 1. Membuat Page Register
+
+## 2. Membuat Page Login
+
+## 3. Menghubungkan User dengan Models
+
+## 4. Membuat Cookie Informasi Last Login
+
+# Pertanyaan
+##  Apa itu Django UserCreationForm, dan jelaskan apa kelebihan dan kekurangannya?
+
+## Apa perbedaan antara autentikasi dan otorisasi dalam konteks Django, dan mengapa keduanya penting?
+
+## Apa itu cookies dalam konteks aplikasi web, dan bagaimana Django menggunakan cookies untuk mengelola data sesi pengguna?
+
+## Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai?
+
+---
+
 <h1 style='color:red'> Tugas 3 </h1>
 
 # Cara Implementasi
 
-## Membuat Form (`forms.py`)
+## 1. Membuat Form (`forms.py`)
 
 `APP/forms.py` akan mengimplementasikan library `django.forms` yang akan mempermudah pembuatan form kita. Seluruh html sudah dihandle oleh library form tersebut. Contoh isi `APP/forms.py` adalah.
 ```python
@@ -15,7 +39,7 @@ class ItemForm(ModelForm):
 ```
 dimana `name`, `amount`, `buy_price`, dan `description` adalah field yang ada pada model `Item` yang sudah didefinisikan.
 
-## Merender form yang dibuat
+## 2. Merender form yang dibuat
 
 Untuk merender form yang sudah kita buat, kita dapat menggunakan kemudahan library django. Pada `html` yang akan kita buat, kita dapat menulis.
 ```html
@@ -34,7 +58,7 @@ Untuk merender form yang sudah kita buat, kita dapat menggunakan kemudahan libra
 ```
 `csrf_token` token wajib didefinisikan setiap definisi form, hal ini terkait dengan keamanan. `form.as_table` akan merender form secara keseluruhan kecuali button submit yang perlu kita tulis sendiri. Jika ingin memodifikasi form agar lebih estetik, kita dapat menggunakan attribut dari `form` seperti `form.visible_fiels`, `form.hidden_fields` dan sebagainya yang tertera pada [dokumentasinya](https://docs.djangoproject.com/en/4.2/topics/forms/).
 
-## Menambahkan view untuk serializer json dan xml
+## 3. Menambahkan view untuk serializer json dan xml
 
 Serializer digunakan untuk mengirim data dalam bentuk `json` dan `xml`. Data ini dapat digunakan sebagai interface program lain (API). Dalam django, serializer diimplementasikan pada `views.py` dengan mereturn `HTTPResponse` dengan `application_type` `application/json` atau `application/xml`. Berikut contoh kodenya.
 ```python
@@ -50,7 +74,7 @@ def show_json(request):
     return HttpResponse(serializers.serialize('json', data), content_type='application/json')
 ```
 
-## Membuat getter dengan dynamic routing
+## 4. Membuat getter dengan dynamic routing
 
 Dynamic routing digunakan untuk menyesuaikan data dengan input dari user melalui url. Contoh, jika kita ingin mendapatkan `Item` **pertama** pada database kita dapat menuju url `www.outapp/1`. Implementasinya pada django dengan mengubah `urls.py` dan `views.py`. Pada `urls.py`
 ```python
@@ -73,6 +97,8 @@ def show_jsonbyid(request, id: int):
     data = Item.objects.filter(pk=id)
     return HttpResponse(serializers.serialize('json', data), content_type='application/json')
 ```
+
+# Pertanyaan
 
 ## Perbedaan antara POST dan GET pada Django?
 

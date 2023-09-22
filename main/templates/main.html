@@ -2,8 +2,11 @@
 {% block navbar %}
     <div class="row container-fluid bg-dark py-2 px-3 m-0">
         <a class="col text-white h-6" style="text-decoration: none;"><strong>Trading Inventory</strong></a>
-        <a class="col text-end text-white" style="text-decoration: none;"><strong>{{ len_data }}</strong> Saved Data</a>
-        <a class="col text-end text-white" style="text-decoration: none;"><strong>{{ total_amount }}</strong> Total Amount</a>
+        <div class="col container d-flex justify-content-center">
+            <a class="col text-end text-white text-center" style="text-decoration: none;"><strong> Username : {{ username }}</strong> </a>
+            <a class="col text-end text-white text-center" style="text-decoration: none;"><strong>{{ len_data }}</strong> Saved Data</a>
+            <a class="col text-end text-white text-center" style="text-decoration: none;"><strong>{{ total_amount }}</strong> Total Amount</a>
+        </div>
     </div>
 {% endblock %}
 {% block content %}
@@ -34,4 +37,10 @@
     <a href={{adddata_url}} class="p-3">
         <button class="button rounded bg-primary text-white" style="font-weight: 600; border-color: #000055;"> Add Data </button>
     </a>
+    <a href={% url 'main:logout' %} class="p-3">
+        <button class="button rounded bg-primary text-white" style="font-weight: 600; border-color: #000055;"> Log Out </button>
+    </a>
+    <div class="my-4 mx-2">
+    <hr class="m-0">
+    <pre>Last Logged In {{last_login}}</pre>
 {% endblock content %}
