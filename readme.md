@@ -5,6 +5,7 @@
 # Cara Implementasi
 
 ## 1. Membuat Page Register
+
 Membuat template `html` dengan nama `register.html` yang dilengkapi dengan pesan yang dapat kita kirimkan ke user jika registrasi berhasil. Pengiriman pesan ini dapat menggunakan interface django `django.contrib.messages`. Kita dapat customisasi tampilan form dengan memanfaatkan `widget_tweaks` dan mengambil komponen-komponen template form dan memasukan komponen bootstrap kedalamnya. `register.html` kurang lebih akan seperti i  ni. 
 ```html
 {% extends 'base.html' %}
@@ -61,6 +62,7 @@ def signup(request):
 `views.py` kurang lebih menggunakan template bawaan `UserCreationForm` untuk membuat form pembuatan user, dan `messages` untuk mengirim pesan ke user. `messages` tidak perlu dipasing pada context. Forms kemudian disimpan pada database yang kemudian kita dapat gunakan untuk login.
 
 ## 2. Membuat Page Login
+
 Tidak ada template login form pada django sehingga kita perlu implement komponennya tersendiri. Untuk setiap komponen input, atribut `name` diperlukan agar nilainya dapat ditangkap pada django. Berikut contoh `login.html` saya implementasikan.
 ```html
 {% extends 'base.html' %}
@@ -129,6 +131,7 @@ def main(request: HttpRequest):
 ```
 
 ## 3. Menghubungkan User dengan Models
+
 Menghubungkan user dengan model pada django cukup simpel, kita dapat menggunakan interface `User` pada `django.contrib.auth.models` dan menambahkannya sebagai `ForeignKey`.
 ```python
 from django.contrib.auth.models import User
@@ -156,6 +159,7 @@ def create(request: HttpRequest):
 Kita menambahkan user terlebih dahulu sebelum menyimpan data.
 
 ## 4. Membuat Cookie Informasi Last Login
+
 Cookie adalah penyimpanan pada client yang bersifat sementara dan kecil. Implementasi cookie pada django terbilang simpel. 
 ```python
 def logout_page(request: HttpRequest):
@@ -165,6 +169,55 @@ def logout_page(request: HttpRequest):
     return response
 ```
 Kita menyisipkan cookie pada response untuk memberi tau browser client variabel yang akan disimpan. Sedangkan untuk mengambil nilai cookie kita dapat melakukan `last_login = request.COOKIES['last_login']`.
+
+## 5. Bonus button add dan button minus
+
+Pertama-tama, widget button perlu kita tambahkan pada html.
+```python
+...
+<td class="text-center"><a href="minus_amount/{{forloop.counter}}"><img src="{% static 'minus.png' %}" width="20" height="20"></a></td>
+<td class="text-center"><a href="add_amount/{{forloop.counter}}"><img src="{% static 'plus.png' %}" width="20" height="20"></a></td>
+...
+```
+Button tersebut akan mengarah ke url `minus_amount/ID` atau `add_amount/ID` dimana `ID` adalah id item yang akan diubah. Implementasi `add_amount/ID` kurang lebih sebagai berikut.
+```python
+@login_required(login_url='/login')
+def add_amount(request: HttpRequest, id: int):
+    user_data = Item.objects.filter(user=request.user).filter(pk=id).first()
+    user_data.amount += 1
+    user_data.save(update_fields=['amount'])
+    response = redirect('main:main')
+    return response
+```
+Dimana kita mengubah nilai dan mengupdate database yang kemudian kembali ke page main. Untuk memberikan notifikasi update, kita dapat memanfaatkan cookie mengset opsi terakhir yang dipilih oleh user. Cookie dapat dilihat diimplementasikan dengan mengubah `response` di atas menjadi.
+```python
+def add_amount(request: HttpRequest, id: int):
+    ...
+    response = redirect('main:main')
+    response.set_cookie('ref', f'Adding 1 Amount of {user_data.name} succeed!!!')
+    return response
+```
+Sehingga pada `main` kita dapat mendapatkan cookie dan memasukannya ke context untuk disesuaikan htmlnya.
+```python
+@login_required(login_url='/login')
+def main(request: HttpRequest):
+    ...
+    try:
+        ref = request.COOKIES['ref']
+    except KeyError:
+        ref = False
+    context = {
+        ref = ref,
+        ...
+    }
+    return render(request, 'main.html', context)
+```
+```html
+...
+{% if ref %}
+    <h3 style="color: green;">{{ref}}</h3>
+{% endif %}
+```
 
 # Pertanyaan
 

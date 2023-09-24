@@ -60,15 +60,45 @@ def main(request: HttpRequest):
         last_login = request.COOKIES['last_login']
     except KeyError:
         last_login = '-'
+    try:
+        ref = request.COOKIES['ref']
+    except KeyError:
+        ref = False
     context = dict(
         data=data,
         adddata_url=adddata_url,
         len_data=len_data,
         total_amount=amount_data,
         username = request.user.username,
-        last_login = last_login
+        last_login = last_login,
+        ref = ref
     )
     return render(request, 'main.html', context)
+
+@login_required(login_url='/login')
+def add_amount(request: HttpRequest, id: int):
+    user_data = Item.objects.filter(user=request.user).filter(pk=id).first()
+    user_data.amount += 1
+    user_data.save(update_fields=['amount'])
+
+    response = redirect('main:main')
+    response.set_cookie('ref', f'Adding 1 Amount of {user_data.name} succeed!!!')
+    return response
+
+@login_required(login_url='/login')
+def minus_amount(request: HttpRequest, id: int):
+    user_data = Item.objects.filter(user=request.user).filter(pk=id).first()
+    response = redirect('main:main')
+
+    if user_data.amount == 0:
+        response.set_cookie('ref', f'Failed, amount of {user_data.name} is 0!!!')
+        return response
+
+    user_data.amount -= 1
+    user_data.save(update_fields=['amount'])
+
+    response.set_cookie('ref', f'Removing 1 Amount of {user_data.name} succeed!!!')
+    return response
 
 def create(request: HttpRequest):
     print(request.POST)

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block navbar %}
     <div class="row container-fluid bg-dark py-2 px-3 m-0">
         <a class="col text-white h-6" style="text-decoration: none;"><strong>Trading Inventory</strong></a>
@@ -19,6 +20,8 @@
                 <th scope="col"> Buy Price </th>
                 <th scope="col"> Time Bought </th>
                 <th scope="col"> Description </th>
+                <th scope="col" class="text-center"> - Amount </th>
+                <th scope="col" class="text-center"> + Amount </th>
             </tr>
         </thead>
         <tbody>
@@ -30,6 +33,8 @@
                     <td>{{row.buy_price}}</td>
                     <td>{{row.time_buy}}</td>
                     <td>{{row.description}}</td>
+                    <td class="text-center"><a href="minus_amount/{{forloop.counter}}"><img src="{% static 'minus.png' %}" width="20" height="20"></a></td>
+                    <td class="text-center"><a href="add_amount/{{forloop.counter}}"><img src="{% static 'plus.png' %}" width="20" height="20"></a></td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -43,4 +48,9 @@
     <div class="my-4 mx-2">
     <hr class="m-0">
     <pre>Last Logged In {{last_login}}</pre>
+
+    
+    {% if ref %}
+        <h3 style="color: green;">{{ref}}</h3>
+    {% endif %}
 {% endblock content %}

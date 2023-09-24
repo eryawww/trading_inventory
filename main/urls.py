@@ -13,4 +13,6 @@ urlpatterns = [
     path('register', views.signup, name='register'),
     path('login', views.login_page, name='login'),
     path('logout', views.logout_page, name='logout'),
+    path('add_amount/<int:id>', views.add_amount, name='add_amount'),
+    path('minus_amount/<int:id>', views.minus_amount, name='minus_amount')
 ]
