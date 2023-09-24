@@ -170,7 +170,7 @@ def logout_page(request: HttpRequest):
 ```
 Kita menyisipkan cookie pada response untuk memberi tau browser client variabel yang akan disimpan. Sedangkan untuk mengambil nilai cookie kita dapat melakukan `last_login = request.COOKIES['last_login']`.
 
-## 5. Bonus button add dan button minus
+## 5. Bonus: button add dan button minus
 
 Pertama-tama, widget button perlu kita tambahkan pada html.
 ```python
