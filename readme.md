@@ -5,21 +5,184 @@
 # Cara Implementasi
 
 ## 1. Membuat Page Register
+Membuat template `html` dengan nama `register.html` yang dilengkapi dengan pesan yang dapat kita kirimkan ke user jika registrasi berhasil. Pengiriman pesan ini dapat menggunakan interface django `django.contrib.messages`. Kita dapat customisasi tampilan form dengan memanfaatkan `widget_tweaks` dan mengambil komponen-komponen template form dan memasukan komponen bootstrap kedalamnya. `register.html` kurang lebih akan seperti i  ni. 
+```html
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="container rounded p-3 m-5 bg-dark text-white", style="width: auto, display: block;">
+        <h1 class="m-3">Sign Up</h1>
+        <form method="post">
+            {% csrf_token %}
+            {% for hidden_field in form.hidden_fields %}
+                {{ hidden_field }}
+            {% endfor %}
+    
+            {% for field in form.visible_fields %}
+                <div class="form-group px-3">
+                    {{ field.errors }}
+                    <label style="font-weight: 500;">{{field.label}}</label>
+                    <div class="py-1"></div>
+                    {% render_field field class="form-control" %}
+                    <div class="py-2"></div>
+                </div>
+            {% endfor %}
+            <input class="btn btn-primary rounded mx-3 my-3" style="font-weight: 700;" type="submit" name="submit" value="Daftar">
+            <a href={% url 'main:login' %} class="btn btn-primary rounded label mx-5" style="font-weight: 700;"    >Sign In</a>
+        </form>
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{message}}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+{% endblock content %}
+```
+`form` adalah form django yang akan kita passing dan `messages` adalah template bawaan django yang akan kita gunakan pada `views.py`
+```python
+from django.contrib.auth.forms import UserCreationForm
+import django.contrib.messages as messages
+
+def signup(request):
+    form = UserCreationForm()
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been created!!!')
+            return redirect('main:login')
+    context = {
+        'form': form
+    }
+    return render(request, 'register.html', context)
+```
+`views.py` kurang lebih menggunakan template bawaan `UserCreationForm` untuk membuat form pembuatan user, dan `messages` untuk mengirim pesan ke user. `messages` tidak perlu dipasing pada context. Forms kemudian disimpan pada database yang kemudian kita dapat gunakan untuk login.
 
 ## 2. Membuat Page Login
+Tidak ada template login form pada django sehingga kita perlu implement komponennya tersendiri. Untuk setiap komponen input, atribut `name` diperlukan agar nilainya dapat ditangkap pada django. Berikut contoh `login.html` saya implementasikan.
+```html
+{% extends 'base.html' %}
+{% block head %}
+<style>
+.label {
+    font-weight: 700;
+}
+</style>
+{% endblock head %}
+
+<div class="container rounded p-3 m-5 bg-dark text-white", style="width: auto, display: block;">
+    <div class="p-3">
+        <h1>Login</h1>
+        <form method="post" action="">
+            {% csrf_token %}
+            <label class="text-white label">Username</label>
+            <div class="py-1">
+            <td>
+                <input type="text" name="username" placeholder="Username" class="form-control">
+            </td>
+            <div class="py-3">
+
+            <label class="text-white label">Password</label>
+            <div class="py-1">
+            <td>
+                <input type="password" name="password" placeholder="Password" class="form-control">
+            </td>
+            <div class="py-3">
+            <input type="submit" class="btn btn-primary rounded label">
+        </form>
+        <a href={% url 'main:register' %} class="btn btn-primary rounded label mx-5">Sign Up</a>
+        {% if messages %}
+        <div class="py-3">
+        <ul>
+            {% for message in messages %}
+            <li>{{message}}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}
+```
+Pada `views.py`, kita perlu mengambil parameter username dan password sesuai dengan attribut `name` yang kemudian dapat menggunakan interface django `authenticate` untuk memverifikasi `user` yang sudah kita save sebelumnya. `login` adalah method bawaan django juga untuk memberi tahu user yang sedang login. Selanjutnya kita dapat mengakses user pada request dengan cara `request.user`.
+```python
+from django.contrib.auth import authenticate, login
+def login_page(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('main:main')
+        messages.warning(request, 'Incorrect Username or Password')
+    context = {}
+    return render(request, 'login.html', context)
+```
+Lalu bagaimana cara kita membatasi sebuah page agar user yang login bisa mengaksesnya? kita dapat memanfaatkan decorator `login_required`, lagi-lagi django membuat hidup kita gampang!. Implementasinya kurang lebih sebagai berikut untuk membatasi page `main`.
+```python
+from django.contrib.auth.decorators import login_required
+@login_required(login_url='/login')
+def main(request: HttpRequest):
+    ...
+```
 
 ## 3. Menghubungkan User dengan Models
+Menghubungkan user dengan model pada django cukup simpel, kita dapat menggunakan interface `User` pada `django.contrib.auth.models` dan menambahkannya sebagai `ForeignKey`.
+```python
+from django.contrib.auth.models import User
+class Item(models.Model):
+    user = models.ForeignKey(User, models.CASCADE)
+    name = models.CharField(max_length=4, name='name')
+    amount = models.IntegerField(name='amount')
+    buy_price = models.FloatField(name='buy_price')
+    time_buy = models.DateTimeField(name='time_buy', auto_now_add=True)
+    description = models.TextField(max_length=30, name='description')
+```
+Sehingga saat pembuatan object item, kita juga perlu mengassign user terkait. Sehingga pada fungsi `create` terkait pembuatan `Item` kurang lebih implementasinya akan seperti berikut.
+```python
+def create(request: HttpRequest):
+    print(request.POST)
+    form = ItemForm(request.POST or None)
+
+    if request.method == 'POST':
+        newdata = form.save(commit=False)
+        newdata.user = request.user
+        newdata.save()
+        return HttpResponseRedirect(reverse('main:main'))
+    return render(request, 'add.html', dict(form=form))
+```
+Kita menambahkan user terlebih dahulu sebelum menyimpan data.
 
 ## 4. Membuat Cookie Informasi Last Login
+Cookie adalah penyimpanan pada client yang bersifat sementara dan kecil. Implementasi cookie pada django terbilang simpel. 
+```python
+def logout_page(request: HttpRequest):
+    logout(request)
+    response = redirect('main:login')
+    response.set_cookie('last_login', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    return response
+```
+Kita menyisipkan cookie pada response untuk memberi tau browser client variabel yang akan disimpan. Sedangkan untuk mengambil nilai cookie kita dapat melakukan `last_login = request.COOKIES['last_login']`.
 
 # Pertanyaan
+
 ##  Apa itu Django UserCreationForm, dan jelaskan apa kelebihan dan kekurangannya?
+
+Django `UserCreationForm` adalah sebuah `form` yang mirip dengan `ModelForm`. Penggunaannya kurang lebih sama. Kelebihannya adalah kemudahan dan kecepatannya dalam membuat `form` user. Kita tidak perlu membuat models seputar user, kita dapat langsung menyimpannya dalam database. Kelemahannya mungkin ada pada customisasi. Namun, pada dasarnya kita dapat membreak down komponen komponen sehingga sebenarnya customisasi dapat dilakukan. Menurut saya, `form` pada django adalah sebuah shortcut. Kemampuan untuk customisasi membuatnya tidak mempunyai kekurangan.
 
 ## Apa perbedaan antara autentikasi dan otorisasi dalam konteks Django, dan mengapa keduanya penting?
 
+Autentikasi adalah proses memverifikasi client sedangkan otorisasi adakah akses yang dapat dilakukan oleh client. Sehingga autentikasi dilakukan sebelum otorisasi. Keduanya penting karena tentu harus ada admin yang mengatur database kita. Selama ini, kita, sebagai developer mengatur penghapusan dan pemantauan database menggunakan command line yang mana tidak efektif. Admin bisa saja seorang HRD, atau spesialis lainnya yang bukan merupakan seorang programmer. Kita perlu menyediakan interface khusus yang memudahkan mereka.
+
 ## Apa itu cookies dalam konteks aplikasi web, dan bagaimana Django menggunakan cookies untuk mengelola data sesi pengguna?
 
+Cookie adalah penyimpanan pada client yang bersifat sementara. Server melalui response meminta browser untuk menyimpan data mirip dengan struktur data dictionary/hash map. Browser kemudian meyimpan cookie yang kemudian akan selalu menyisipkan cookie pada request browser selanjutnya kepada website tersebut. Sehingga pada browser, cookie memiliki variabel name dan value (data yang disimpan), domain website, path pada domain tersebut, tanggal expired, size cookie, dan sebagainya (priority, SameSite, dll). Cookie dapat dilihat oleh client mentah-mentah sehingga kurang cocok untuk digunakan sebagai penyimpanan sesuatu yang rahasia.
+
 ## Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai?
+
+Karena cookie disimpan pada client, keamanan bergantung sepenuhnya pada aktivitas client. Cookie secara transparan dapat dilihat oleh client melalui browser sehingga informasi sensitif tidak cocok untuk ditampilkan. Dikarenakan transparasinya, cookie dapat dicopy dan ditiru dengan mudah. Terdapat attack yang bernama cookie stealing yang dapat menipu server dengan mudah. 
 
 ---
 
