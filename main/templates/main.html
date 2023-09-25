@@ -14,7 +14,7 @@
     <table class="table">
         <thead class="thead">
             <tr>
-                <th scope="col"> # </th>
+                <th scope="col"> ID </th>
                 <th scope="col"> Name </th>
                 <th scope="col"> Amount </th>
                 <th scope="col"> Buy Price </th>
@@ -22,19 +22,21 @@
                 <th scope="col"> Description </th>
                 <th scope="col" class="text-center"> - Amount </th>
                 <th scope="col" class="text-center"> + Amount </th>
+                <th scope="col" class="text-center"> Delete </th>
             </tr>
         </thead>
         <tbody>
             {% for row in data %}
                 <tr>
-                    <th scope="row">{{ forloop.counter }}</th>
+                    <th scope="row">{{ row.pk }}</th>
                     <td>{{row.name}}</td>
                     <td>{{row.amount}}</td>
                     <td>{{row.buy_price}}</td>
                     <td>{{row.time_buy}}</td>
                     <td>{{row.description}}</td>
-                    <td class="text-center"><a href="minus_amount/{{forloop.counter}}"><img src="{% static 'minus.png' %}" width="20" height="20"></a></td>
-                    <td class="text-center"><a href="add_amount/{{forloop.counter}}"><img src="{% static 'plus.png' %}" width="20" height="20"></a></td>
+                    <td class="text-center"><a href="minus_amount/{{ row.pk }}"><img src="{% static 'minus.png' %}" width="20" height="20"></a></td>
+                    <td class="text-center"><a href="add_amount/{{ row.pk }}"><img src="{% static 'plus.png' %}" width="20" height="20"></a></td>
+                    <td class="text-center"><a href="delete/{{ row.pk }}"><img src="{% static 'trash-bin.png' %}" width="20" height="20"></a></td>
                 </tr>
             {% endfor %}
         </tbody>

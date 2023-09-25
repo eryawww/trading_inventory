@@ -100,6 +100,16 @@ def minus_amount(request: HttpRequest, id: int):
     response.set_cookie('ref', f'Removing 1 Amount of {user_data.name} succeed!!!')
     return response
 
+@login_required(login_url='/login')
+def delete(request: HttpRequest, id: int):
+    user_data = Item.objects.filter(user=request.user).filter(pk=id).first()
+    response = redirect('main:main')
+    amount = user_data.amount
+    name = user_data.name
+    user_data.delete()
+    response.set_cookie('ref', f'Removing {amount} Amount of {name} succeed!!!')
+    return response
+
 def create(request: HttpRequest):
     print(request.POST)
     form = ItemForm(request.POST or None)
