@@ -1,5 +1,85 @@
 [Application Link](https://trading-inventory.adaptable.app)
 
+<h1 style='color:red'> Tugas 5 </h1>
+
+# Cara Implementasi
+
+## 1. Kustomisasi page main
+Pada page main, saya mengubah tampilannya menggunakan card. Pada luaran, saya div `class="row"` yang di dalamnya terdapat div `class="col"` untuk setiap data. Fungsi dari 2 class ini digunakan untuk membuat grid view yang responsif pada bootstrap. Di dalam div tersebut, saya menggunakan `class="card"` untuk membuat sebuah card. Untuk kustomisasi card lebih lanjut, saya menggunakan `class="card-header"` untuk membuat header pada card, `class="card-body"` untuk membuat body card, dan `class="card-footer"` untuk membuat footer pada card. Saya juga menambahkan background dengan mengguanakn `class="bg-dark"` dan `class="bg-success"` untuk membuat background berwarna gelap dan hijau.  
+**Sumber:** [Dokumentasi Bootstrap Card](https://getbootstrap.com/docs/5.3/components/card/#about)
+
+## 2. Kustomisasi pada form
+Pada form, saya memecah komponen form dari django yang kemudian saya kustomisasi sendiri menggunakan bootstrap. Komponen form saya dapatkan dengan mengakses `form.hidden_fields` dan `form.visible_fields`. Saya memberikan `class="py-1 form-control"` pada setiap komponen input untuk membuatnya lebih menarik sesuai dengan template bootstrap.
+```python
+{% for hidden_field in form.hidden_fields %}
+    {{ hidden_field }}
+{% endfor %}
+
+{% for field in form.visible_fields %}
+    <div class="form-group px-3">
+        {{ field.errors }}
+        <label style="font-weight: 500;">{{field.label}}</label>
+        <div class="py-1"></div>
+        {% render_field field class="form-control" %}
+        <div class="py-2"></div>
+    </div>
+{% endfor %}
+```
+
+Sumber: [Dokumentasi Form Django](https://docs.djangoproject.com/en/4.2/topics/forms/)
+
+# Pertanyaan
+
+## Jelaskan manfaat dari setiap element selector dan kapan waktu yang tepat untuk menggunakannya.
+
+Terdapat beberapa selector yang dapat digunakan pada CSS. Selector digunakan untuk memberikan styling yang telah diset kepada sebuah tag html.
+
+1. **Element Selector**, Digunakan untuk memilih elemen HTML berdasarkan nama elemennya.
+
+```css
+p {
+  color: blue;
+}
+```
+2. **Id selector**, Digunakan untuk memilih elemen dengan atribut "id" tertentu.
+
+```css
+#header {
+  background-color: blue;
+}
+```
+
+3. **Class Selector**, Digunakan untuk memilih elemen dengan atribut "class" tertentu.
+```css
+.btn-primary {
+  background-color: blue;
+}
+```
+
+## Jelaskan HTML5 Tag yang kamu ketahui.
+
+HTML5 adalah versi terbaru dari HTML. Beberapa tag HTML5 yang dapat digunakan adalah:
+
+1. `<canvas>` digunakan untuk membuat gambar, grafik, dan animasi dengan bantuan JavaScript.
+2. `<video>` digunakan untuk memperlihatkan video pada halaman web.
+3. `<nav>` digunakan untuk membuat bagian navigasi situs web
+4. `<audio>` digunakan untuk memperlihatkan file audio pada halaman web.
+5. `<img>` digunakan untuk memperlihatkan gambar dalam halaman web.
+6. `<a>` digunakan untuk membuat hyperlink ke halaman web lain, file, dan sebagainya.
+
+## Jelaskan perbedaan antara margin dan padding.
+
+Margin dan padding adalah properti CSS yang digunakan untuk mengatur tata letak antar elemen HTML. **Margin** mengatur jarak antara elemen tersebut dan elemen-elemen lain di sekitarnya sedangkan **Padding** mengatur jarak diantara elemen di dalam tag tersebut. Contoh terbaik dalam membedakan keduanya adalah pada saat membuat button dengan text di dalamnya.
+
+<img src='https://images.ctfassets.net/pdf29us7flmy/6FMwLUnze6f6SQjjxpB5lq/4da8905078cce5668a00b488f913340d/-IND-004-082-_When_and_How_To_Use_Margin_vs._Padding_in_CSS_-_Final.png?w=1440&q=100&fm=avif' height=300 width=400/>
+
+
+## Jelaskan perbedaan antara framework CSS Tailwind dan Bootstrap. Kapan sebaiknya kita menggunakan Bootstrap daripada Tailwind, dan sebaliknya?
+
+Bootstrap menyediakan komponen-komponen yang sudah jadi sehingga tinggal kita pakai sedangkan tailwind menyediakan template-template lebih dasar yang harus kita gabungkan terlebih dulu untuk memakainya. Sehingga perbedaannya adalah **tailwind** unggul pada kustomisasi namun lemah pada **kecepatan implementasi** sedangkan **bootstrap** unggul pada **kecepatan implementasi** namun lengah pada **kustomisasi**.
+
+Waktu terbaik menggunakan **tailwind** adalah disaat kita diminta membuat website dengan desain kompleks dengan jangka waktu yang **lama**. Sedangkan bootstrap adalah ketika kita diminta membuat website **simpel** dengan jangka waktu yang **pendek**.
+
 <h1 style='color:red'> Tugas 4 </h1>
 
 # Cara Implementasi

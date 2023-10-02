@@ -50,6 +50,13 @@ def main(request: HttpRequest):
     if request.method == 'POST':
         pass
     data = models.Item.objects.filter(user=request.user)
+    if data.count() == 0:
+        last = []
+        data = []
+    else:
+        last = data[data.count()-1]
+        data = data[:data.count()-1]
+    
     len_data = len(data)
     if len_data == 0:
         amount_data = 0
@@ -64,8 +71,10 @@ def main(request: HttpRequest):
         ref = request.COOKIES['ref']
     except KeyError:
         ref = False
+
     context = dict(
         data=data,
+        last=last,
         adddata_url=adddata_url,
         len_data=len_data,
         total_amount=amount_data,

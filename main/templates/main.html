@@ -11,48 +11,76 @@
     </div>
 {% endblock %}
 {% block content %}
-    <table class="table">
-        <thead class="thead">
-            <tr>
-                <th scope="col"> ID </th>
-                <th scope="col"> Name </th>
-                <th scope="col"> Amount </th>
-                <th scope="col"> Buy Price </th>
-                <th scope="col"> Time Bought </th>
-                <th scope="col"> Description </th>
-                <th scope="col" class="text-center"> - Amount </th>
-                <th scope="col" class="text-center"> + Amount </th>
-                <th scope="col" class="text-center"> Delete </th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in data %}
-                <tr>
-                    <th scope="row">{{ row.pk }}</th>
-                    <td>{{row.name}}</td>
-                    <td>{{row.amount}}</td>
-                    <td>{{row.buy_price}}</td>
-                    <td>{{row.time_buy}}</td>
-                    <td>{{row.description}}</td>
-                    <td class="text-center"><a href="minus_amount/{{ row.pk }}"><img src="{% static 'minus.png' %}" width="20" height="20"></a></td>
-                    <td class="text-center"><a href="add_amount/{{ row.pk }}"><img src="{% static 'plus.png' %}" width="20" height="20"></a></td>
-                    <td class="text-center"><a href="delete/{{ row.pk }}"><img src="{% static 'trash-bin.png' %}" width="20" height="20"></a></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href={{adddata_url}} class="p-3">
-        <button class="button rounded bg-primary text-white" style="font-weight: 600; border-color: #000055;"> Add Data </button>
-    </a>
-    <a href={% url 'main:logout' %} class="p-3">
-        <button class="button rounded bg-primary text-white" style="font-weight: 600; border-color: #000055;"> Log Out </button>
-    </a>
-    <div class="my-4 mx-2">
-    <hr class="m-0">
-    <pre>Last Logged In {{last_login}}</pre>
-
-    
-    {% if ref %}
-        <h3 style="color: green;">{{ref}}</h3>
+<div class="container-fluid">
+    <div class="row">
+        {% for item in data %}
+        <div class="col">
+            <div class="card m-3" style="width: 18rem;">
+                <div class="card-header d-flex justify-content-between bg-success text-white">
+                    <h5 class="card-title">{{item.name}}</h5>
+                    <div class="d-flex">
+                        <h5 class="card-title mx-1">{{item.amount}}</h5>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAlxJREFUaEPtmOtRBCEQhPsy0UjUSNRI1EjUSDQTzUSrqw4L5ximeay7ax2/7qoWmG/ohoEDdt4OO48fZ4C1V3DJFXgEcHsEfAXA/9PbEgDXAJ4BXJhoPwFMB5kJwIAZOAFqjSD3AN5nLMcMAAZ+B+ChMaAXAE8ACNTdRgCUwBkgmwc3LKteABqylnHKgzJJ2Y1gu0FaATyD5hK4qeg78kkziAoQTZwDMAhKhxr3WvKM3anS97LRIwBOQKlwwtbGILgankkjWXG+0OgegDJ4ynJtB0qSYCC9IFVZlQCo87dKuq1B+WkErGhbGeNEmiWAj8IpyiAVXUZeUfxRG4P9L/PklgC+nOwrAKmrYlLPH1ESfsXcApCCC411/FCRBGuj5A91wxgGSHJSCzMFhL5Sd7opAPl+3QKiFHu5gglmi8OpADlIdHip/rAbhvXkIgDqCRoZlOMwEfnl508BPKOrBmV/u7GsApAbvVZOl3bszQBEtVM60Xlw1s6m1VbAA7AHYjVAAJsB8Oqh3QB4le+/AfBqrc1IyFsBmrj2zLJ5gGi32i2A94AQlhK8jUWva1HWlAPKGyMqN0IADmAPl56AbZ/RB4SiyUcu9a1QI3PZAu9nbiUrPe+eqoRaX/hOxo0AUodIl8pq5HNFL3zy/VsFaLmMeDCcK0qE8mpRrfyUTEZ3XG8MXt69e6/yblQct3UF8kF6QWwgrkGVbI4A5P7oMXrphU+JeVhCvQdQ6icbVKGZsQJ2Hu9VrtmgawFw3uSPq+Nv9e1IiXkxCTVPPqPDEhKaEZc8xhlATtVCH34DR420MaZM1PwAAAAASUVORK5CYII=" width="25" height="25"/>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <pre class="">💵 Rp.{{item.buy_price}}</pre>
+                    <p class="card-text">{{item.description}}</p>
+                    <div class="d-flex justify-content-between">
+                        <a href="minus_amount/{{ item.pk }}"><img src="{% static 'minus.png' %}" width="25" height="25"></a>
+                        <a href="delete/{{ item.pk }}"><img src="{% static 'trash-bin.png' %}" width="25" height="25"></a>
+                        <a href="add_amount/{{ item.pk }}"><img src="{% static 'plus.png' %}" width="25" height="25"></a>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-between bg-dark text-white">
+                    <div class="mx-4 fw-bold">{{item.time_buy|date:"d M H:m" }}</div>
+                    <div class="mx-4 fw-bold">{{item.time_buy|date:"Y" }}</div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% if last %}
+        <div class="col">
+            <div class="card m-3" style="width: 18rem;">
+                <div class="card-header d-flex justify-content-between bg-danger text-white">
+                    <h5 class="card-title">{{last.name}}</h5>
+                    <div class="d-flex">
+                        <h5 class="card-title mx-1">{{last.amount}}</h5>
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAlxJREFUaEPtmOtRBCEQhPsy0UjUSNRI1EjUSDQTzUSrqw4L5ximeay7ax2/7qoWmG/ohoEDdt4OO48fZ4C1V3DJFXgEcHsEfAXA/9PbEgDXAJ4BXJhoPwFMB5kJwIAZOAFqjSD3AN5nLMcMAAZ+B+ChMaAXAE8ACNTdRgCUwBkgmwc3LKteABqylnHKgzJJ2Y1gu0FaATyD5hK4qeg78kkziAoQTZwDMAhKhxr3WvKM3anS97LRIwBOQKlwwtbGILgankkjWXG+0OgegDJ4ynJtB0qSYCC9IFVZlQCo87dKuq1B+WkErGhbGeNEmiWAj8IpyiAVXUZeUfxRG4P9L/PklgC+nOwrAKmrYlLPH1ESfsXcApCCC411/FCRBGuj5A91wxgGSHJSCzMFhL5Sd7opAPl+3QKiFHu5gglmi8OpADlIdHip/rAbhvXkIgDqCRoZlOMwEfnl508BPKOrBmV/u7GsApAbvVZOl3bszQBEtVM60Xlw1s6m1VbAA7AHYjVAAJsB8Oqh3QB4le+/AfBqrc1IyFsBmrj2zLJ5gGi32i2A94AQlhK8jUWva1HWlAPKGyMqN0IADmAPl56AbZ/RB4SiyUcu9a1QI3PZAu9nbiUrPe+eqoRaX/hOxo0AUodIl8pq5HNFL3zy/VsFaLmMeDCcK0qE8mpRrfyUTEZ3XG8MXt69e6/yblQct3UF8kF6QWwgrkGVbI4A5P7oMXrphU+JeVhCvQdQ6icbVKGZsQJ2Hu9VrtmgawFw3uSPq+Nv9e1IiXkxCTVPPqPDEhKaEZc8xhlATtVCH34DR420MaZM1PwAAAAASUVORK5CYII=" width="25" height="25"/>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <pre class="">💵 Rp.{{last.buy_price}}</pre>
+                    <p class="card-text">{{last.description}}</p>
+                    <div class="d-flex justify-content-between">
+                        <a href="minus_amount/{{ last.pk }}"><img src="{% static 'minus.png' %}" width="25" height="25"></a>
+                        <a href="delete/{{ last.pk }}"><img src="{% static 'trash-bin.png' %}" width="25" height="25"></a>
+                        <a href="add_amount/{{ last.pk }}"><img src="{% static 'plus.png' %}" width="25" height="25"></a>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-between bg-dark text-white">
+                    <div class="mx-4 fw-bold">{{last.time_buy|date:"d M H:m" }}</div>
+                    <div class="mx-4 fw-bold">{{last.time_buy|date:"Y" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
     {% endif %}
+</div>
+</div>
+<div class="my-3"/>
+<a href={{adddata_url}} class="p-3" style="text-decoration: none;">
+    <button class="button rounded bg-primary text-white" style="font-weight: 600"> Add Data </button>
+</a>
+<a href={% url 'main:logout' %} class="p-3">
+    <button class="button rounded bg-primary text-white" style="font-weight: 600"> Log Out </button>
+</a>
+<div class="my-4 mx-2">
+<hr class="m-0">
+<pre>Last Logged In {{last_login}}</pre>
+
+
+{% if ref %}
+    <h3 style="color: green;">{{ref}}</h3>
+{% endif %}
 {% endblock content %}
