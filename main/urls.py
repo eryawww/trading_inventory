@@ -15,5 +15,10 @@ urlpatterns = [
     path('logout/', views.logout_page, name='logout'),
     path('add_amount/<int:id>', views.add_amount, name='add_amount'),
     path('minus_amount/<int:id>', views.minus_amount, name='minus_amount'),
-    path('delete/<int:id>', views.delete, name='minus_amount')
+    path('delete/<int:id>', views.delete, name='minus_amount'),
+
+    path('get/<str:pk>', views.get_data, name='get_js'),
+    path('subs/<str:inc>', views.edit_data, name='edit_js'),
+    path('remove/<int:pk>', views.remove_data, name='remove_js'),
+    path('create-ajax/', views.add_product_ajax, name='add_product')
 ]

@@ -1,5 +1,133 @@
 [Application Link](https://trading-inventory.adaptable.app)
 
+<h1 style='color:red'> Tugas 6 </h1>
+
+# Implementasi
+
+## Membuat fungsi untuk mengenerate data secara asynchronous. 
+
+Fungsi ini dijalankan sekali pada awal kedatangan kepada website.
+```js
+async function refreshPage() {
+        document.getElementById("card-container").innerHTML = ""
+        const products = await getAllItem()
+        let htmlString = ""
+        products.forEach((item, index) => {
+            pk = item.pk
+            item = item.fields
+            const dateStr = item.time_buy
+            const date = new Date(dateStr)
+            const day = date.getDate().toString().padStart(2, '0')
+            const month = date.getMonth().toString().padStart(2, '0')
+            const hour = date.getHours().toString().padStart(2, '0')
+            const minute = date.getMinutes().toString().padStart(2, '0')
+            const year = date.getFullYear().toString()
+    
+            const displayDate1 = `${day}-${month} ${hour}:${minute}`
+            const displayDate2 = `${year}`
+    
+            htmlString += `\n<div class="col" id='card-${pk}'>
+                <div class="card m-3" style="width: 18rem;">
+                    <div class="card-header d-flex justify-content-between bg-success text-white">
+                        <h5 class="card-title">${item.name}</h5>
+                        <div class="d-flex">
+                            <h5 class="card-title mx-1" id="stock-${pk}">${item.amount}</h5>
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAlxJREFUaEPtmOtRBCEQhPsy0UjUSNRI1EjUSDQTzUSrqw4L5ximeay7ax2/7qoWmG/ohoEDdt4OO48fZ4C1V3DJFXgEcHsEfAXA/9PbEgDXAJ4BXJhoPwFMB5kJwIAZOAFqjSD3AN5nLMcMAAZ+B+ChMaAXAE8ACNTdRgCUwBkgmwc3LKteABqylnHKgzJJ2Y1gu0FaATyD5hK4qeg78kkziAoQTZwDMAhKhxr3WvKM3anS97LRIwBOQKlwwtbGILgankkjWXG+0OgegDJ4ynJtB0qSYCC9IFVZlQCo87dKuq1B+WkErGhbGeNEmiWAj8IpyiAVXUZeUfxRG4P9L/PklgC+nOwrAKmrYlLPH1ESfsXcApCCC411/FCRBGuj5A91wxgGSHJSCzMFhL5Sd7opAPl+3QKiFHu5gglmi8OpADlIdHip/rAbhvXkIgDqCRoZlOMwEfnl508BPKOrBmV/u7GsApAbvVZOl3bszQBEtVM60Xlw1s6m1VbAA7AHYjVAAJsB8Oqh3QB4le+/AfBqrc1IyFsBmrj2zLJ5gGi32i2A94AQlhK8jUWva1HWlAPKGyMqN0IADmAPl56AbZ/RB4SiyUcu9a1QI3PZAu9nbiUrPe+eqoRaX/hOxo0AUodIl8pq5HNFL3zy/VsFaLmMeDCcK0qE8mpRrfyUTEZ3XG8MXt69e6/yblQct3UF8kF6QWwgrkGVbI4A5P7oMXrphU+JeVhCvQdQ6icbVKGZsQJ2Hu9VrtmgawFw3uSPq+Nv9e1IiXkxCTVPPqPDEhKaEZc8xhlATtVCH34DR420MaZM1PwAAAAASUVORK5CYII=" width="25" height="25"/>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <pre class="">💵 Rp.${item.buy_price}</pre>
+                        <p class="card-text">${item.description}</p>
+                        <div class="d-flex justify-content-between">
+                            <button onclick="editItem(${pk}, -1)" class="btn"><img src="{% static 'minus.png' %}" width="25" height="25"></a>
+                            <button onclick="remove(${pk})" class="btn"><img src="{% static 'trash-bin.png' %}" width="25" height="25"></a>
+                            <button onclick="editItem(${pk}, 1)" class="btn"><img src="{% static 'plus.png' %}" width="25" height="25"></a>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between bg-dark text-white">
+                        <div class="mx-4 fw-bold">${displayDate1}</div>
+                        <div class="mx-4 fw-bold">${displayDate2}</div>
+                    </div>
+                </div>
+            </div>`
+        })
+        document.getElementById("card-container").innerHTML = htmlString
+    }
+    refreshPage()
+```
+
+# Membuat fungsi pada javascript untuk menghandle onclick button. 
+
+Fungsi-fungsi ini akan melakukan asynchronous request kepada server dan mengupdate layout setelah mendapatkan pesan sukses.
+```js
+async function addItem(){
+    let data = new FormData(document.querySelector('#form'))
+        fetch('/create-ajax/', {
+            method: 'POST',
+            body: data
+        }).then((response) => refreshPage())
+    }
+    async function getItem(pk){
+        return fetch(`get/${pk}`)
+    }
+    async function getAllItem() {
+        return fetch("get/-1").then((res) => res.json())
+    }
+    async function editItem(pk, inc) {
+        const formData = new FormData();
+        formData.append('pk', pk);
+        res = fetch(
+            `subs/${inc}`, {
+                method: 'POST',
+                body: formData
+        }).then((res) => res.json()).then((json) => {
+            document.getElementById(`stock-${pk}`).innerHTML = json.data
+        })
+        return false
+    }
+    async function remove(pk) {
+        fetch(`remove/${pk}`).then( (res) =>
+            document.getElementById(`card-${pk}`).remove()
+        ).then((res) => alert('Deleted!!!'))
+    }
+```
+
+## Melakukan bind html \<button> ke fungsi javascript
+
+```html
+<button onclick="editItem(${pk}, -1)" class="btn"><img src="{% static 'minus.png' %}" width="25" height="25"></a>
+<button onclick="remove(${pk})" class="btn"><img src="{% static 'trash-bin.png' %}" width="25" height="25"></a>
+<button onclick="editItem(${pk}, 1)" class="btn"><img src="{% static 'plus.png' %}" width="25" height="25"></a>
+```
+`onclick="editItem(${pk})"` berguna untuk memberitahu html bahwa jika button ini diklik maka fungsi editItem akan dipanggil.
+
+
+# Pertanyaan
+
+1. Perbedaan antara asynchronous programming dengan synchronous programming.
+
+Synchronous melakukan eksekusi program secara berurutan sedangkan asynchronous memungkinkan kita untuk melakukan eksekusi program secara 'bersamaan'. Asynchronous programming biasanya berkaitan dengan bottleneck network maupun disk, sehingga selagi kita menunggu data yang diinginkan tersedia, kita bisa meminta program untukk melakukan hal lain dan tidak menunggu data tersebut.
+
+2. Dalam penerapan JavaScript dan AJAX, terdapat penerapan paradigma event-driven programming. Jelaskan maksud dari paradigma tersebut dan sebutkan salah satu contoh penerapannya pada tugas ini.
+
+Event-driven programming adalah konsep dimana kita bisa membuat sebuah trigger (event) yang akan melakukan sesuatu ketika sesuatu itu terjadi. Contohnya ada pada button yang akan mentrigger ketika ditekan dan memanggil function untuk melakukan sesuatu
+
+3. Jelaskan penerapan asynchronous programming pada AJAX.
+
+```js
+async function getAllItem() {
+    return fetch("get/-1").then((res) => res.json())
+}
+```
+
+Contoh penerapan asynchronous pada AJAX adalah dengan menggunakan fungsi `fetch().then((data) => func)`. fetch akan melakukan http request yang kemudian jika data sudah tersedia, `.then` akan melakukan apa yang perlu dilakukan selanjutnya.
+
+4. Pada PBP kali ini, penerapan AJAX dilakukan dengan menggunakan Fetch API daripada library jQuery. Bandingkanlah kedua teknologi tersebut dan tuliskan pendapat kamu teknologi manakah yang lebih baik untuk digunakan.
+
+Fetch merupakan sebuah interface baru yang lebih kuat, fleksibel, dan cepat dibandingkan jQuery yang perlu import library. Fetch API lebih modern dan terus diberkembang namun perlu beberapa konfigurasi ekstra seperti cookie. Sehingga menurut saya, fetch() lebih baik dibandingkan jQuery.
+
+---
+
 <h1 style='color:red'> Tugas 5 </h1>
 
 # Cara Implementasi

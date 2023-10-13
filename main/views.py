@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
+from django.http import HttpResponse, HttpRequest, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 
 from django.core import serializers
@@ -13,6 +13,48 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 import django.contrib.messages as messages
+
+from django.views.decorators.csrf import csrf_exempt
+
+def remove_data(request, pk):
+    user_data = Item.objects.filter(user=request.user).filter(pk=pk).first()
+    user_data.delete()
+
+    return HttpResponse("Deleted", status_code=200)
+
+def get_data(request, pk: str):
+    # if pk = -1 then all
+    pk = int(pk)
+    if pk == -1:
+        return HttpResponse(serializers.serialize('json', Item.objects.filter(user=request.user)), content_type='application/json')
+    else:
+        user_data = Item.objects.filter(user=request.user).filter(pk=pk)
+        return HttpResponse(serializers.serialize('json', user_data), content_type='application/json')
+
+@csrf_exempt
+def edit_data(request, inc: str):
+    inc = int(inc)
+    pk = request.POST.get('pk')
+
+    user_data = Item.objects.filter(user=request.user).filter(pk=pk).first()
+    
+    user_data.amount += inc
+    user_data.save(update_fields=['amount'])
+    data = {'data': user_data.amount}
+    return JsonResponse(data)
+
+@csrf_exempt
+def add_product_ajax(request):
+    user = request.user
+    name = request.POST.get('name')
+    buy_price = request.POST.get('price')
+    amount = request.POST.get('amount')
+    description = request.POST.get('description')
+    time_buy = datetime.datetime.now()
+
+    item = Item.objects.create(user=user, name=name, buy_price=buy_price, amount=amount, description=description, time_buy=time_buy)
+    item.save()
+    return HttpResponse("Saved")
 
 def signup(request):
     form = UserCreationForm()

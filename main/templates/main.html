@@ -12,73 +12,140 @@
 {% endblock %}
 {% block content %}
 <div class="container-fluid">
-    <div class="row">
-        {% for item in data %}
-        <div class="col">
-            <div class="card m-3" style="width: 18rem;">
-                <div class="card-header d-flex justify-content-between bg-success text-white">
-                    <h5 class="card-title">{{item.name}}</h5>
-                    <div class="d-flex">
-                        <h5 class="card-title mx-1">{{item.amount}}</h5>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAlxJREFUaEPtmOtRBCEQhPsy0UjUSNRI1EjUSDQTzUSrqw4L5ximeay7ax2/7qoWmG/ohoEDdt4OO48fZ4C1V3DJFXgEcHsEfAXA/9PbEgDXAJ4BXJhoPwFMB5kJwIAZOAFqjSD3AN5nLMcMAAZ+B+ChMaAXAE8ACNTdRgCUwBkgmwc3LKteABqylnHKgzJJ2Y1gu0FaATyD5hK4qeg78kkziAoQTZwDMAhKhxr3WvKM3anS97LRIwBOQKlwwtbGILgankkjWXG+0OgegDJ4ynJtB0qSYCC9IFVZlQCo87dKuq1B+WkErGhbGeNEmiWAj8IpyiAVXUZeUfxRG4P9L/PklgC+nOwrAKmrYlLPH1ESfsXcApCCC411/FCRBGuj5A91wxgGSHJSCzMFhL5Sd7opAPl+3QKiFHu5gglmi8OpADlIdHip/rAbhvXkIgDqCRoZlOMwEfnl508BPKOrBmV/u7GsApAbvVZOl3bszQBEtVM60Xlw1s6m1VbAA7AHYjVAAJsB8Oqh3QB4le+/AfBqrc1IyFsBmrj2zLJ5gGi32i2A94AQlhK8jUWva1HWlAPKGyMqN0IADmAPl56AbZ/RB4SiyUcu9a1QI3PZAu9nbiUrPe+eqoRaX/hOxo0AUodIl8pq5HNFL3zy/VsFaLmMeDCcK0qE8mpRrfyUTEZ3XG8MXt69e6/yblQct3UF8kF6QWwgrkGVbI4A5P7oMXrphU+JeVhCvQdQ6icbVKGZsQJ2Hu9VrtmgawFw3uSPq+Nv9e1IiXkxCTVPPqPDEhKaEZc8xhlATtVCH34DR420MaZM1PwAAAAASUVORK5CYII=" width="25" height="25"/>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <pre class="">💵 Rp.{{item.buy_price}}</pre>
-                    <p class="card-text">{{item.description}}</p>
-                    <div class="d-flex justify-content-between">
-                        <a href="minus_amount/{{ item.pk }}"><img src="{% static 'minus.png' %}" width="25" height="25"></a>
-                        <a href="delete/{{ item.pk }}"><img src="{% static 'trash-bin.png' %}" width="25" height="25"></a>
-                        <a href="add_amount/{{ item.pk }}"><img src="{% static 'plus.png' %}" width="25" height="25"></a>
-                    </div>
-                </div>
-                <div class="card-footer d-flex justify-content-between bg-dark text-white">
-                    <div class="mx-4 fw-bold">{{item.time_buy|date:"d M H:m" }}</div>
-                    <div class="mx-4 fw-bold">{{item.time_buy|date:"Y" }}</div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-        {% if last %}
-        <div class="col">
-            <div class="card m-3" style="width: 18rem;">
-                <div class="card-header d-flex justify-content-between bg-danger text-white">
-                    <h5 class="card-title">{{last.name}}</h5>
-                    <div class="d-flex">
-                        <h5 class="card-title mx-1">{{last.amount}}</h5>
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAlxJREFUaEPtmOtRBCEQhPsy0UjUSNRI1EjUSDQTzUSrqw4L5ximeay7ax2/7qoWmG/ohoEDdt4OO48fZ4C1V3DJFXgEcHsEfAXA/9PbEgDXAJ4BXJhoPwFMB5kJwIAZOAFqjSD3AN5nLMcMAAZ+B+ChMaAXAE8ACNTdRgCUwBkgmwc3LKteABqylnHKgzJJ2Y1gu0FaATyD5hK4qeg78kkziAoQTZwDMAhKhxr3WvKM3anS97LRIwBOQKlwwtbGILgankkjWXG+0OgegDJ4ynJtB0qSYCC9IFVZlQCo87dKuq1B+WkErGhbGeNEmiWAj8IpyiAVXUZeUfxRG4P9L/PklgC+nOwrAKmrYlLPH1ESfsXcApCCC411/FCRBGuj5A91wxgGSHJSCzMFhL5Sd7opAPl+3QKiFHu5gglmi8OpADlIdHip/rAbhvXkIgDqCRoZlOMwEfnl508BPKOrBmV/u7GsApAbvVZOl3bszQBEtVM60Xlw1s6m1VbAA7AHYjVAAJsB8Oqh3QB4le+/AfBqrc1IyFsBmrj2zLJ5gGi32i2A94AQlhK8jUWva1HWlAPKGyMqN0IADmAPl56AbZ/RB4SiyUcu9a1QI3PZAu9nbiUrPe+eqoRaX/hOxo0AUodIl8pq5HNFL3zy/VsFaLmMeDCcK0qE8mpRrfyUTEZ3XG8MXt69e6/yblQct3UF8kF6QWwgrkGVbI4A5P7oMXrphU+JeVhCvQdQ6icbVKGZsQJ2Hu9VrtmgawFw3uSPq+Nv9e1IiXkxCTVPPqPDEhKaEZc8xhlATtVCH34DR420MaZM1PwAAAAASUVORK5CYII=" width="25" height="25"/>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <pre class="">💵 Rp.{{last.buy_price}}</pre>
-                    <p class="card-text">{{last.description}}</p>
-                    <div class="d-flex justify-content-between">
-                        <a href="minus_amount/{{ last.pk }}"><img src="{% static 'minus.png' %}" width="25" height="25"></a>
-                        <a href="delete/{{ last.pk }}"><img src="{% static 'trash-bin.png' %}" width="25" height="25"></a>
-                        <a href="add_amount/{{ last.pk }}"><img src="{% static 'plus.png' %}" width="25" height="25"></a>
-                    </div>
-                </div>
-                <div class="card-footer d-flex justify-content-between bg-dark text-white">
-                    <div class="mx-4 fw-bold">{{last.time_buy|date:"d M H:m" }}</div>
-                    <div class="mx-4 fw-bold">{{last.time_buy|date:"Y" }}</div>
-                </div>
-            </div>
-        </div>
+    <div class="row" id="card-container">
+        {% comment %} CARD {% endcomment %}
     </div>
-    {% endif %}
-</div>
 </div>
 <div class="my-3"/>
-<a href={{adddata_url}} class="p-3" style="text-decoration: none;">
-    <button class="button rounded bg-primary text-white" style="font-weight: 600"> Add Data </button>
-</a>
+{% comment %} <a href={{adddata_url}} class="p-3" style="text-decoration: none;"> {% endcomment %}
 <a href={% url 'main:logout' %} class="p-3">
     <button class="button rounded bg-primary text-white" style="font-weight: 600"> Log Out </button>
 </a>
+
+<div class="p-3">
+    <button class="button rounded bg-primary text-white" data-bs-toggle="modal" data-bs-target="#exampleModal" style="font-weight: 600"> Add Data </button>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-3" style="font-weight: 700;" id="exampleModalLabel">Add Product</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form" onsubmit="return false;">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="col-form-label">Name:</label>
+                        <input type="text" class="form-control" name="name"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label class="col-form-label">Price:</label>
+                        <input type="number" class="form-control" name="price"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label class="col-form-label">Amount:</label>
+                        <input type="number" class="form-control" name="amount"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="col-form-label">Description:</label>
+                        <textarea class="form-control" name="description"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button onclick="addItem()" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="my-4 mx-2">
 <hr class="m-0">
 <pre>Last Logged In {{last_login}}</pre>
 
+<script>
+    async function addItem(){
+        let data = new FormData(document.querySelector('#form'))
+        fetch('/create-ajax/', {
+            method: 'POST',
+            body: data
+        }).then((response) => refreshPage())
+    }
+    async function getItem(pk){
+        return fetch(`get/${pk}`)
+    }
+    async function getAllItem() {
+        return fetch("get/-1").then((res) => res.json())
+    }
+    async function editItem(pk, inc) {
+        const formData = new FormData();
+        formData.append('pk', pk);
+        res = fetch(
+            `subs/${inc}`, {
+                method: 'POST',
+                body: formData
+        }).then((res) => res.json()).then((json) => {
+            document.getElementById(`stock-${pk}`).innerHTML = json.data
+        })
+        return false
+    }
+    async function remove(pk) {
+        fetch(`remove/${pk}`).then( (res) =>
+            document.getElementById(`card-${pk}`).remove()
+        ).then((res) => alert('Deleted!!!'))
+    }
+    async function refreshPage() {
+        document.getElementById("card-container").innerHTML = ""
+        const products = await getAllItem()
+        let htmlString = ""
+        products.forEach((item, index) => {
+            pk = item.pk
+            item = item.fields
+            const dateStr = item.time_buy
+            const date = new Date(dateStr)
+            const day = date.getDate().toString().padStart(2, '0')
+            const month = date.getMonth().toString().padStart(2, '0')
+            const hour = date.getHours().toString().padStart(2, '0')
+            const minute = date.getMinutes().toString().padStart(2, '0')
+            const year = date.getFullYear().toString()
+    
+            const displayDate1 = `${day}-${month} ${hour}:${minute}`
+            const displayDate2 = `${year}`
+    
+            htmlString += `\n<div class="col" id='card-${pk}'>
+                <div class="card m-3" style="width: 18rem;">
+                    <div class="card-header d-flex justify-content-between bg-success text-white">
+                        <h5 class="card-title">${item.name}</h5>
+                        <div class="d-flex">
+                            <h5 class="card-title mx-1" id="stock-${pk}">${item.amount}</h5>
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAlxJREFUaEPtmOtRBCEQhPsy0UjUSNRI1EjUSDQTzUSrqw4L5ximeay7ax2/7qoWmG/ohoEDdt4OO48fZ4C1V3DJFXgEcHsEfAXA/9PbEgDXAJ4BXJhoPwFMB5kJwIAZOAFqjSD3AN5nLMcMAAZ+B+ChMaAXAE8ACNTdRgCUwBkgmwc3LKteABqylnHKgzJJ2Y1gu0FaATyD5hK4qeg78kkziAoQTZwDMAhKhxr3WvKM3anS97LRIwBOQKlwwtbGILgankkjWXG+0OgegDJ4ynJtB0qSYCC9IFVZlQCo87dKuq1B+WkErGhbGeNEmiWAj8IpyiAVXUZeUfxRG4P9L/PklgC+nOwrAKmrYlLPH1ESfsXcApCCC411/FCRBGuj5A91wxgGSHJSCzMFhL5Sd7opAPl+3QKiFHu5gglmi8OpADlIdHip/rAbhvXkIgDqCRoZlOMwEfnl508BPKOrBmV/u7GsApAbvVZOl3bszQBEtVM60Xlw1s6m1VbAA7AHYjVAAJsB8Oqh3QB4le+/AfBqrc1IyFsBmrj2zLJ5gGi32i2A94AQlhK8jUWva1HWlAPKGyMqN0IADmAPl56AbZ/RB4SiyUcu9a1QI3PZAu9nbiUrPe+eqoRaX/hOxo0AUodIl8pq5HNFL3zy/VsFaLmMeDCcK0qE8mpRrfyUTEZ3XG8MXt69e6/yblQct3UF8kF6QWwgrkGVbI4A5P7oMXrphU+JeVhCvQdQ6icbVKGZsQJ2Hu9VrtmgawFw3uSPq+Nv9e1IiXkxCTVPPqPDEhKaEZc8xhlATtVCH34DR420MaZM1PwAAAAASUVORK5CYII=" width="25" height="25"/>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <pre class="">💵 Rp.${item.buy_price}</pre>
+                        <p class="card-text">${item.description}</p>
+                        <div class="d-flex justify-content-between">
+                            <button onclick="editItem(${pk}, -1)" class="btn"><img src="{% static 'minus.png' %}" width="25" height="25"></a>
+                            <button onclick="remove(${pk})" class="btn"><img src="{% static 'trash-bin.png' %}" width="25" height="25"></a>
+                            <button onclick="editItem(${pk}, 1)" class="btn"><img src="{% static 'plus.png' %}" width="25" height="25"></a>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between bg-dark text-white">
+                        <div class="mx-4 fw-bold">${displayDate1}</div>
+                        <div class="mx-4 fw-bold">${displayDate2}</div>
+                    </div>
+                </div>
+            </div>`
+        })
+        document.getElementById("card-container").innerHTML = htmlString
+    
+        
+    }
+    refreshPage()
+</script>
 
 {% if ref %}
     <h3 style="color: green;">{{ref}}</h3>
