@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-v&j(c-y7z7@nrgbck*ron$uq533%6_4eadus5iidx-7z#iwjr9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.vercel.app']
 
 
 # Application definition
@@ -71,7 +71,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'trading_inventory.wsgi.application'
+WSGI_APPLICATION = 'trading_inventory.wsgi.app'
 
 
 # Database
