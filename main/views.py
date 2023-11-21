@@ -6,7 +6,7 @@ from django.core import serializers
 
 from . import models
 from main.forms import ItemForm
-from main.models import Item
+from main.models import Item, User
 import datetime
 
 from django.contrib.auth.forms import UserCreationForm
@@ -15,6 +15,52 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.messages as messages
 
 from django.views.decorators.csrf import csrf_exempt
+
+import json
+
+@csrf_exempt
+def register_flutter(request):
+    try:
+        print(request.POST)
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        # print("=>", username, password)
+        user = User(username=username)
+        user.set_password(password)
+        user.save()
+        return JsonResponse({"status": "success"}, status=200)
+    except Exception as e:
+        print(e)
+        return JsonResponse({"status": "failed"}, status=401)
+
+@csrf_exempt
+def get_my_data(request):
+    user = request.user
+    items = Item.objects.filter(user=user)
+    
+    return JsonResponse(serializers.serialize('json', items), safe=False)
+
+@csrf_exempt
+def add_data_flutter(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+
+        new_product = Item.objects.create(
+            user = request.user,
+            name = data["name"],
+            amount = int(data["amount"]),
+            buy_price = float(data["price"]),
+            description = data["description"]
+        )
+
+        new_product.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+
+##
 
 def remove_data(request, pk):
     user_data = Item.objects.filter(user=request.user).filter(pk=pk).first()

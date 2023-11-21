@@ -4,6 +4,10 @@ from . import views
 app_name = 'main'
 
 urlpatterns = [
+    path('add_data_flutter', views.add_data_flutter, name='add_data_flutter'),
+    path('get_my_data', views.get_my_data, name='add_data_flutter'),
+    path('register_flutter', views.register_flutter, name='register_flutter'),
+
     path('', views.main, name='main'),
     path('xml/', views.show_xml, name='xml'),
     path('xml/<int:id>', views.show_xmlbyid, name='xmlbyid'),
